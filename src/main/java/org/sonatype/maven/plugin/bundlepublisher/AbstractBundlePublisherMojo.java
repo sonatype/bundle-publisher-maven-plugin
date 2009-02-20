@@ -11,11 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.List;
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,16 +30,6 @@ public abstract class AbstractBundlePublisherMojo
     private BundlePublisher publisher;
 
     /**
-     * @component
-     */
-    private ArtifactFactory artifactFactory;
-
-    /**
-     * @component
-     */
-    private ArtifactResolver resolver;
-
-    /**
      * @parameter expression="${localRepository}"
      * @required
      * @readonly
@@ -50,32 +37,20 @@ public abstract class AbstractBundlePublisherMojo
     protected ArtifactRepository localRepository;
 
     /**
-     * @parameter expression="${project.remoteArtifactRepositories}"
+     * File location where targeted Flex SDK is located
+     * 
+     * @parameter expression="${bundle}"
+     * @required
      */
-    private List<?> remoteRepositories;
+    private File bundle;
 
     /**
      * File location where targeted Flex SDK is located
-     *
-     * @parameter expression="${flex.sdk.bundle}"
+     * 
+     * @parameter expression="${descriptor}"
      * @required
      */
-    private File sdkBundle;
-
-    /**
-     * File location where targeted Flex SDK is located
-     *
-     * @parameter expression="${flex.sdk.descriptor}"
-     * @required
-     */
-    private File sdkDescriptor;
-
-    /**
-     * Security code to make sure nobody will overwrite FDK version by accident
-     *
-     * @parameter expression=${overwrite.code}
-     */
-    private String overwriteCode;
+    private File descriptor;
 
     public AbstractBundlePublisherMojo()
     {
@@ -89,12 +64,12 @@ public abstract class AbstractBundlePublisherMojo
         InputStream in = null;
         try
         {
-            in = new FileInputStream( sdkDescriptor );
-            publisher.validate( sdkBundle, in );
+            in = new FileInputStream( descriptor );
+            publisher.validate( bundle, in );
             IOUtil.close( in );
 
-            in = new FileInputStream( sdkDescriptor );
-            proceed( publisher, sdkBundle, in );
+            in = new FileInputStream( descriptor );
+            proceed( publisher, bundle, in );
             IOUtil.close( in );
         }
         catch ( PublishingException e )
