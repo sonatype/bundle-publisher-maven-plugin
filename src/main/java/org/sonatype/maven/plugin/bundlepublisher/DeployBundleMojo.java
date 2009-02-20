@@ -20,7 +20,6 @@ import org.sonatype.plexus.component.bundlepublisher.PublishingException;
 /**
  * @goal deploy-bundle
  * @requiresProject false
- * @requiresDirectInvocation true
  * @author marvin
  */
 public class DeployBundleMojo
